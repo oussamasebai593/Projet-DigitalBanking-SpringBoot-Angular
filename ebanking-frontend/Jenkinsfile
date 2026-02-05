@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/TON-USER/Amina-contact.git'
+                    url: 'https://github.com/oussamasebai593/Project-DigitalBanking-SpringBoot-Angular.git'
             }
         }
 
