@@ -25,7 +25,6 @@ pipeline {
         stage('Build Angular') {
             steps {
                 // تأكد أن Angular CLI متثبّت
-                sh 'npm install -g @angular/cli'
                 sh 'npm run build'
             }
         }
