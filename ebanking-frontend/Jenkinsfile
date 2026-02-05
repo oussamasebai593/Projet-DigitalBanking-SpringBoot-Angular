@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS18' // للـ Angular
+        jdk 'JDK21'      // للـ Spring Boot
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'git@github.com:oussamasebai593/Projet-DigitalBanking.git'
+            }
+        }
+
+        stage('Install Frontend') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('ebanking-backend') {
+                    sh './mvnw clean package -DskipTests'
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo '✅ Build réussi (Frontend + Backend)'
+        }
+        failure {
+            echo '❌ Build échoué'
+        }
+    }
+}
