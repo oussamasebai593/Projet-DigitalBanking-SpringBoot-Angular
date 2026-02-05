@@ -3,6 +3,7 @@ pipeline {
 
     tools {
         jdk 'JDK17'
+        nodejs "NodeJS 22"
     }
 
     stages {
