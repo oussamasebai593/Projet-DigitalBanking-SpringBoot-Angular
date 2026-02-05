@@ -15,17 +15,23 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install dependencie') {
             steps {
-                // بدون dir() لأن Jenkinsfile داخل ebanking-frontend
+              dir('ebanking-frontend'){
+                 // بدون dir() لأن Jenkinsfile داخل ebanking-frontend
                 sh 'npm install'
+              }
+              
             }
         }
 
         stage('Build Angular') {
             steps {
-                // تأكد أن Angular CLI متثبّت
+                dir('ebanking-frontend'){
+                  // تأكد أن Angular CLI متثبّت
                 sh 'npm run build'
+                }
+                
             }
         }
 
