@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS18'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/TON-USER/Amina-contact.git'
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build Angular') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo '✅ Frontend Angular build réussi'
+        }
+        failure {
+            echo '❌ Erreur build Angular'
+        }
+    }
+}
