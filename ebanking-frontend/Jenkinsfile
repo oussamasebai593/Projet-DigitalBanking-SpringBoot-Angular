@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS18' // لازم يكون متثبّت في Jenkins Manage Tools
+        nodejs 'NodeJS22' // لازم يكون متثبّت في Jenkins Manage Tools
     }
 
     stages {
