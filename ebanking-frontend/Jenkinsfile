@@ -1,44 +1,21 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'JDK17'
-        nodejs 'NodeJS22'
-    }
-
     stages {
-
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/oussamasebai593/Project-DigitalBanking-SpringBoot-Angular.git'
+                git branch: '*',
+                    url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
             }
         }
-
-        stage('Install dependencies') {
-            steps {
-                dir('ebanking-frontend') {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Build Angular') {
-            steps {
-                dir('ebanking-frontend') {
-                    sh 'npm run build'
-                }
-            }
-        }
-
     }
 
     post {
         success {
-            echo '✅ Frontend Angular build réussi'
+            echo '✅ Checkout réussi'
         }
         failure {
-            echo '❌ Erreur build Angular'
+            echo '❌ Erreur lors du checkout'
         }
     }
 }
