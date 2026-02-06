@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+
+  db:
+    image: mysql:8
+    container_name: ebanking-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ebanking
+      MYSQL_USER: ebank
+      MYSQL_PASSWORD: ebank
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: ./ebanking-back
+    container_name: ebanking-back
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ebanking
+      SPRING_DATASOURCE_USERNAME: ebank
+      SPRING_DATASOURCE_PASSWORD: ebank
+
+  frontend:
+    build: ./ebanking-front
+    container_name: ebanking-front
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
