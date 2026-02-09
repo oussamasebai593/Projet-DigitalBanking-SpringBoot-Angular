@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  backendHost: 'http://ebanking-back:9000'
+  backendHost: 'http://ebanking-back:8085'
 };
 
