@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 //J'autorise toute les domaine
-/*@CrossOrigin(origins = "http://192.168.1.54:4200")
+/*@CrossOrigin(origins = "http://192.168.1.54:8085")
 public class CustomerRestController {
     private BankAccountService bankAccountService;
 */
