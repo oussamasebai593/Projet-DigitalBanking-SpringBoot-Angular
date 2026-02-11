@@ -17,10 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 //J'autorise toute les domaine
-@CrossOrigin("*")
+/*@CrossOrigin("*")
 public class CustomerRestController {
     private BankAccountService bankAccountService;
-
+*/
     @GetMapping ("/customers")
     public List<CustomerDTO> customers(){
         return bankAccountService.listCustomers();
