@@ -5,60 +5,86 @@ pipeline {
         nodejs 'NodeJS22' // لازم يكون متثبّت في Jenkins Manage Tools
     }
 
+    environment {
+        IMAGE_NAME = "ebanking-frontend"
+        DOCKERHUB_REPO = "hamzaatlili/front"
+        VERSION = "${BUILD_NUMBER}" // كل build ياخو tag مختلف
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
-                // Checkout branch master
                 git branch: 'master',
                     url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
             }
         }
 
-        stage('Install dependencie') {
+        stage('Install dependencies') {
             steps {
-              dir('ebanking-frontend'){
-                 // بدون dir() لأن Jenkinsfile داخل ebanking-frontend
-                sh 'npm install'
-              }
-              
+                dir('ebanking-frontend') {
+                    sh "npm install"
+                }
             }
         }
 
         stage('Build Angular') {
             steps {
-                dir('ebanking-frontend'){
-                  // تأكد أن Angular CLI متثبّت
-                sh 'npm run build'
+                dir('ebanking-frontend') {
+                    sh "npm run build"
                 }
-                
             }
         }
-              stage('Build Docker Image') {
+
+        stage('Build Docker Image') {
             steps {
                 dir('ebanking-frontend') {
-                    sh "docker build -t $IMAGE_NAME ."
+                    sh "docker build -t ${IMAGE_NAME} ."
                 }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                sh "docker tag ${IMAGE_NAME} ${DOCKERHUB_REPO}:${VERSION}"
+                sh "docker tag ${IMAGE_NAME} ${DOCKERHUB_REPO}:latest"
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds', 
+                    usernameVariable: 'DOCKER_USER', 
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh "docker push ${DOCKERHUB_REPO}:${VERSION}"
+                sh "docker push ${DOCKERHUB_REPO}:latest"
             }
         }
 
         stage('Deploy Container') {
             steps {
-                sh 'docker stop $IMAGE_NAME || true'
-                sh 'docker rm $IMAGE_NAME || true'
-                sh 'docker run -d -p 80:80 --name $IMAGE_NAME $IMAGE_NAME'
+                sh "docker stop ${IMAGE_NAME} || true"
+                sh "docker rm ${IMAGE_NAME} || true"
+                sh "docker run -d -p 80:80 --name ${IMAGE_NAME} ${IMAGE_NAME}"
             }
         }
     }
 
-    }
-
     post {
         success {
-            echo '✅ Checkout + Build Angular réussi'
+            echo '✅ Pipeline terminé avec succès'
         }
         failure {
-            echo '❌ Erreur lors du checkout ou build Angular'
+            echo '❌ Erreur dans le pipeline'
         }
     }
-
+}
