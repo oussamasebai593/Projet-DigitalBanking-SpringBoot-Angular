@@ -21,9 +21,7 @@ pipeline {
 
         stage('Install dependencies') {
             steps {
-                dir('ebanking-frontend') {
                     sh "npm install"
-                }
             }
         }
 
