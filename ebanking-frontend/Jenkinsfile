@@ -13,6 +13,12 @@ pipeline {
                     url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
             }
         }
+        stage('Debug Structure') {
+    steps {
+        sh 'ls -la'
+        sh 'find . -name package.json'
+    }
+}
 
         stage('Install Dependencies') {
             steps {
@@ -21,12 +27,6 @@ pipeline {
                 }
             }
         }
-      stage('Debug Structure') {
-    steps {
-        sh 'ls -la'
-        sh 'find . -name package.json'
-    }
-}
 
     }
 
