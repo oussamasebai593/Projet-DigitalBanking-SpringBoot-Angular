@@ -4,6 +4,7 @@ pipeline {
     tools {
         nodejs 'NodeJS22'
     }
+
     stages {
 
         stage('Checkout') {
@@ -13,21 +14,22 @@ pipeline {
             }
         }
 
-stage('Install Dependencies') {
-    steps {
-        dir('ebanking-frontend') {
-            sh 'npm install'
+        stage('Install Dependencies') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build Angular') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm run build'
+                }
+            }
         }
     }
-}
-
-stage('Build Angular') {
-    steps {
-        sh 'npm install'
-        sh 'npm run build'
-    }
-}
-
 
     post {
         always {
