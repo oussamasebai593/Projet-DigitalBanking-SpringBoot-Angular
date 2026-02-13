@@ -17,7 +17,7 @@ services:
       - db_data:/var/lib/mysql
 
   backend:
-    build: ./ebanking-back
+    build: ./ebanking-backend
     container_name: ebanking-back
     restart: always
     ports:
@@ -30,7 +30,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ebank
 
   frontend:
-    build: ./ebanking-front
+    build: ./ebanking-frontend
     container_name: ebanking-front
     ports:
       - "80:80"
