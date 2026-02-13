@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK17'
+        maven 'Maven'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('ebanking-backend') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                dir('ebanking-backend') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('ebanking-backend') {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo '✅ Backend build avec succès'
+        }
+        failure {
+            echo '❌ Erreur dans le backend'
+        }
+    }
+}

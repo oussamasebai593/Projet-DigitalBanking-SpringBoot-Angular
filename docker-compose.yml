@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  ebanking-db:
+    image: mariadb:10.6
+    container_name: ebanking-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ebanking
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+
+  ebanking-backend:
+    image: oussama0079/ebanking-backend:${tag}
+    container_name: ebanking-backend
+    ports:
+      - "8085:8080"
+    depends_on:
+      ebanking-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://ebanking-db:3306/ebanking
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+
+  ebanking-frontend:
+    image: oussama0079/ebanking-frontend:${tag}
+    container_name: ebanking-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - ebanking-backend

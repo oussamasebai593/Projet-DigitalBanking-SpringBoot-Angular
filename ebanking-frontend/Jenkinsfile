@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS22' // لازم يكون متثبّت في Jenkins Manage Tools
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                // Checkout branch master
+                git branch: 'master',
+                    url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                // بدون dir() لأن Jenkinsfile داخل ebanking-frontend
+                sh 'npm install'
+            }
+        }
+
+        stage('Build Angular') {
+            steps {
+                // تأكد أن Angular CLI متثبّت
+                sh 'npm install -g @angular/cli'
+                sh 'npm run build'
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo '✅ Checkout + Build Angular réussi'
+        }
+        failure {
+            echo '❌ Erreur lors du checkout ou build Angular'
+        }
+    }
+}
+
