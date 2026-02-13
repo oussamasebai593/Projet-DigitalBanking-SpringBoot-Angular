@@ -4,11 +4,6 @@ pipeline {
     tools {
         nodejs 'NodeJS22'
     }
-
-    environment {
-        IMAGE_NAME = "ebanking-front"
-    }
-
     stages {
 
         stage('Checkout') {
