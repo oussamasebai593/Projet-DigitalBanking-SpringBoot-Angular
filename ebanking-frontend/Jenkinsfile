@@ -9,7 +9,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                     url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
             }
         }
