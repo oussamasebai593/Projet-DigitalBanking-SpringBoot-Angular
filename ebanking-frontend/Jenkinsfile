@@ -6,12 +6,11 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "ebanking-frontend"
-        DOCKERHUB_REPO = "hamzaatlili/front"
-        VERSION = "${BUILD_NUMBER}" // Chaque build aura un tag unique
+        IMAGE_NAME = "ebanking-front"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'master',
@@ -19,25 +18,21 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install Dependencies') {
             steps {
-                    sh "npm install"
+                sh 'npm install'
             }
         }
 
         stage('Build Angular') {
             steps {
-                dir('ebanking-frontend') {
-                    sh "npm run build"
-                }
+                sh 'npm run build'
             }
         }
 
-              stage('Build Docker Image') {
+        stage('Build Docker Image') {
             steps {
-                dir('ebanking-frontend') {
-                    sh 'docker build -t $IMAGE_NAME .'
-                }
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
@@ -48,14 +43,17 @@ pipeline {
                 sh 'docker run -d -p 80:80 --name $IMAGE_NAME $IMAGE_NAME'
             }
         }
-    
     }
+
     post {
+        always {
+            sh 'docker system prune -f'
+        }
         success {
-            echo '✅ Pipeline terminé avec succès'
+            echo '✅ Frontend build et Docker déployé'
         }
         failure {
-            echo '❌ Erreur dans le pipeline'
+            echo '❌ Erreur lors du build frontend'
         }
     }
 }
