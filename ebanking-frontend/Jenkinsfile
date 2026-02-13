@@ -20,17 +20,13 @@ pipeline {
 
 stage('Install Dependencies') {
     steps {
-        dir('ebanking-frontend') {
-            sh 'npm install'
-        }
+        sh 'npm install'
     }
 }
 
 stage('Build Angular') {
     steps {
-        dir('ebanking-frontend') {
-            sh 'npm run build'
-        }
+        sh 'npm run build'
     }
 }
 
