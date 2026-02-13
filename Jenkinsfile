@@ -12,7 +12,16 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir('ebanking-backend') {
+                    // Build Maven
                     sh 'mvn clean package -DskipTests'
+
+                    // Renommer le JAR pour correspondre au Dockerfile
+                    sh 'mv target/*.jar target/ebanking-back.jar'
+
+                    // Vérifier que le JAR existe
+                    sh 'ls -l target/'
+
+                    // Build Docker
                     sh "docker build -t $DOCKERHUB_REPO_BACK:$TAG ."
                 }
             }
@@ -44,6 +53,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
+                // Déploiement Docker Compose avec TAG dynamique
                 sh "export TAG=$TAG && docker compose pull"
                 sh "export TAG=$TAG && docker compose up -d"
             }
