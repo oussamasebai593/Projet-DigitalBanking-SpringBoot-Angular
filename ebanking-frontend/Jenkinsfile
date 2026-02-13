@@ -2,17 +2,16 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS22' // لازم يكون متثبّت في Jenkins Manage Tools
+        nodejs 'NodeJS22'
     }
 
     environment {
         IMAGE_NAME = "ebanking-frontend"
         DOCKERHUB_REPO = "hamzaatlili/front"
-        VERSION = "${BUILD_NUMBER}" // كل build ياخو tag مختلف
+        VERSION = "${BUILD_NUMBER}" // Chaque build aura un tag unique
     }
 
-    stages 
-
+    stages {
         stage('Checkout') {
             steps {
                 git branch: 'master',
@@ -34,14 +33,24 @@ pipeline {
                     sh "npm run build"
                 }
             }
-                 stage('Build Docker Image') {
+        }
+
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                dir('ebanking-frontend') {
+                    sh "docker build -t ${IMAGE_NAME}:${VERSION} ."
+                }
             }
         }
-        } 
 
-    
+        stage('Tag & Push Docker Image') {
+            steps {
+                sh "docker tag ${IMAGE_NAME}:${VERSION} ${DOCKERHUB_REPO}:${VERSION}"
+                sh "docker push ${DOCKERHUB_REPO}:${VERSION}"
+            }
+        }
+    }
+
     post {
         success {
             echo '✅ Pipeline terminé avec succès'
@@ -50,4 +59,4 @@ pipeline {
             echo '❌ Erreur dans le pipeline'
         }
     }
-    }
+}
