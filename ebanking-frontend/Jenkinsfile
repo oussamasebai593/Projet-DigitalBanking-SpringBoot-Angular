@@ -27,6 +27,14 @@ pipeline {
                 }
             }
         }
+              stage('Build Angular') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'npm run build'
+                }
+            }
+        }
+    }
 
     }
 
