@@ -61,4 +61,4 @@ pipeline {
             echo '❌ Erreur lors du checkout ou build Angular'
         }
     }
-}
+
