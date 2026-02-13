@@ -21,6 +21,13 @@ pipeline {
                 }
             }
         }
+      stage('Debug Structure') {
+    steps {
+        sh 'ls -la'
+        sh 'find . -name package.json'
+    }
+}
+
     }
 
     post {
