@@ -8,5 +8,5 @@ RUN npm run build --prod
 
 # Étape 2 : Nginx pour servir le front
 FROM nginx:alpine
-COPY --from=build /app/dist/ebanking-front /usr/share/nginx/html
+COPY --from=build /app/dist/ebanking-frontend /usr/share/nginx/html
 EXPOSE 80
