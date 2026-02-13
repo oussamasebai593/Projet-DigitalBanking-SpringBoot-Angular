@@ -36,49 +36,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                dir('ebanking-frontend') {
-                    sh "sudo docker build -t ${IMAGE_NAME} ."
-                }
-            }
-        }
-
-        stage('Tag Docker Image') {
-            steps {
-                sh "docker tag ${IMAGE_NAME} ${DOCKERHUB_REPO}:${VERSION}"
-                sh "docker tag ${IMAGE_NAME} ${DOCKERHUB_REPO}:latest"
-            }
-        }
-
-        stage('Docker Login') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds', 
-                    usernameVariable: 'DOCKER_USER', 
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                sh "docker push ${DOCKERHUB_REPO}:${VERSION}"
-                sh "docker push ${DOCKERHUB_REPO}:latest"
-            }
-        }
-
-        stage('Deploy Container') {
-            steps {
-                sh "docker stop ${IMAGE_NAME} || true"
-                sh "docker rm ${IMAGE_NAME} || true"
-                sh "docker run -d -p 80:80 --name ${IMAGE_NAME} ${IMAGE_NAME}"
-            }
-        }
     }
-
     post {
         success {
             echo '✅ Pipeline terminé avec succès'
@@ -87,4 +45,4 @@ pipeline {
             echo '❌ Erreur dans le pipeline'
         }
     }
-}
+    }
