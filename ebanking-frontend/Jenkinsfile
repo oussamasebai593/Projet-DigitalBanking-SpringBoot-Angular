@@ -36,7 +36,7 @@ pipeline {
         }
     }
 
-    }
+    
 
     post {
         always {
@@ -49,4 +49,5 @@ pipeline {
             echo '❌ Erreur lors du build frontend'
         }
     }
+
 }
