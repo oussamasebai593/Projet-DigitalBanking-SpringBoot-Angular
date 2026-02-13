@@ -23,9 +23,11 @@ stage('Install Dependencies') {
 
 stage('Build Angular') {
     steps {
+        sh 'npm install'
         sh 'npm run build'
     }
 }
+
 
     post {
         always {
