@@ -54,10 +54,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Déploiement Docker Compose avec TAG dynamique
-                sh """
-                    TAG=${TAG} docker compose pull
-                    TAG=${TAG} docker compose up -d --force-recreate --remove-orphans
-                """    
+        sh """
+            docker rm -f ebanking-db || true
+
+            TAG=${TAG} docker compose pull
+
+            TAG=${TAG} docker compose up -d --force-recreate --remove-orphans
+        """   
             }
         }
     }
