@@ -54,8 +54,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Déploiement Docker Compose avec TAG dynamique
-                sh "export TAG=$TAG && docker compose pull"
-                sh "export TAG=$TAG && docker compose up -d"
+        sh """
+            cd docker-compose.yml
+            TAG=${TAG} docker compose pull
+            TAG=${TAG} docker compose down
+            TAG=${TAG} docker compose up -d
+        """
             }
         }
     }
