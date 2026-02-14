@@ -54,11 +54,11 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Déploiement Docker Compose avec TAG dynamique
-        sh """
-            TAG=${TAG} docker compose pull
-            TAG=${TAG} docker compose down
-            TAG=${TAG} docker compose up -d
-        """
+                sh """
+                    cd /home/jenkins/app
+                    TAG=${TAG} docker compose pull
+                    TAG=${TAG} docker compose up -d --force-recreate --remove-orphans
+                """    
             }
         }
     }
