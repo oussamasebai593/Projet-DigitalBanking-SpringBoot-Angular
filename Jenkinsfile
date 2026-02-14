@@ -55,7 +55,6 @@ pipeline {
             steps {
                 // Déploiement Docker Compose avec TAG dynamique
                 sh """
-                    cd /home/jenkins/app
                     TAG=${TAG} docker compose pull
                     TAG=${TAG} docker compose up -d --force-recreate --remove-orphans
                 """    
