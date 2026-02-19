@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         nodejs 'NodeJS22'
-      sonarScanner 'sonar-scaner'
+        sonarScanner 'sonar-scaner'
     }
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'
@@ -35,9 +35,7 @@ stage('SonarQube Analysis') {
             steps {
         SONAR_HOSTURL = 'http://192.168.8.17:9000/'
         SONAR_AUTH_TOKEN= credentials('SonarQube_jenkins')
-
     }
-
     post {
         always {
             sh 'docker system prune -f'
@@ -48,5 +46,7 @@ stage('SonarQube Analysis') {
         failure {
             echo '❌ Erreur lors du build frontend'
         }
+    }
+}
     }
 }
