@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN_FRONTEND = credentials('sonar-scaner')
+        SONAR_TOKEN_FRONTEND = credentials('sonar-scaner') // تأكد أن هذا هو ID في Jenkins
     }
 
     stages {
@@ -33,6 +33,23 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                dir('ebanking-frontend') {
+                    // هذا باش يولد lcov.info للتغطية
+                    sh 'npm test -- --coverage'
+                }
+            }
+        }
+
+        stage('Check Coverage File') {
+            steps {
+                dir('ebanking-frontend') {
+                    sh 'ls -la coverage/lcov.info || echo "⚠️ coverage file not found!"'
+                }
+            }
+        }
+
         stage('SonarQube Scan Frontend') {
             steps {
                 dir('ebanking-frontend') {
@@ -54,7 +71,9 @@ pipeline {
 
     post {
         always {
-            sh 'docker system prune -f'
+            script {
+                sh 'docker system prune -f'
+            }
         }
         success {
             echo '✅ Frontend build et SonarQube scan terminé'
