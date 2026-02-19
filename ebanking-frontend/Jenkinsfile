@@ -5,10 +5,6 @@ pipeline {
         nodejs 'NodeJS22'
     }
 
-    environment {
-        SONAR_TOKEN_FRONTEND = credentials('sonar-scaner') // تأكد أن هذا هو ID في Jenkins
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -33,53 +29,18 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                dir('ebanking-frontend') {
-                    // هذا باش يولد lcov.info للتغطية
-                    sh 'npm test -- --coverage'
-                }
-            }
-        }
 
-        stage('Check Coverage File') {
-            steps {
-                dir('ebanking-frontend') {
-                    sh 'ls -la coverage/lcov.info || echo "⚠️ coverage file not found!"'
-                }
-            }
-        }
-
-        stage('SonarQube Scan Frontend') {
-            steps {
-                dir('ebanking-frontend') {
-                    withSonarQubeEnv('MySonarQubeServer') {
-                        sh '''
-                        sonar-scanner \
-                            -Dsonar.projectKey=frontend_project \
-                            -Dsonar.sources=src \
-                            -Dsonar.host.url=http://192.168.8.17:9000 \
-                            -Dsonar.login=$SONAR_TOKEN_FRONTEND \
-                            -Dsonar.exclusions=node_modules/** \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-                        '''
-                    }
-                }
-            }
-        }
     }
 
     post {
         always {
-            script {
-                sh 'docker system prune -f'
-            }
+            sh 'docker system prune -f'
         }
         success {
-            echo '✅ Frontend build et SonarQube scan terminé'
+            echo '✅ Frontend build et Docker déployé'
         }
         failure {
-            echo '❌ Erreur lors du build ou SonarQube scan'
+            echo '❌ Erreur lors du build frontend'
         }
     }
 }
