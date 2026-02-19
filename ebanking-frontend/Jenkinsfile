@@ -5,6 +5,10 @@ pipeline {
         nodejs 'NodeJS22'
     }
 
+    environment {
+        SONAR_TOKEN_FRONTEND = credentials('sonar-scaner')
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -29,7 +33,23 @@ pipeline {
             }
         }
 
-
+        stage('SonarQube Scan Frontend') {
+            steps {
+                dir('ebanking-frontend') {
+                    withSonarQubeEnv('MySonarQubeServer') {
+                        sh '''
+                        sonar-scanner \
+                            -Dsonar.projectKey=frontend_project \
+                            -Dsonar.sources=src \
+                            -Dsonar.host.url=http://192.168.8.17:9000 \
+                            -Dsonar.login=$SONAR_TOKEN_FRONTEND \
+                            -Dsonar.exclusions=node_modules/** \
+                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                        '''
+                    }
+                }
+            }
+        }
     }
 
     post {
@@ -37,10 +57,10 @@ pipeline {
             sh 'docker system prune -f'
         }
         success {
-            echo '✅ Frontend build et Docker déployé'
+            echo '✅ Frontend build et SonarQube scan terminé'
         }
         failure {
-            echo '❌ Erreur lors du build frontend'
+            echo '❌ Erreur lors du build ou SonarQube scan'
         }
     }
 }
