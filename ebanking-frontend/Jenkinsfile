@@ -3,23 +3,19 @@ pipeline {
 
     tools {
         nodejs 'NodeJS22'
-        sonarScanner 'sonar-scaner'
+        sonar 'SonarScanner'   // بدل sonarScanner
     }
+
     environment {
         SONARQUBE_SERVER = 'SonarQubeServer'
+        SONAR_HOSTURL = 'http://192.168.8.17:9000/'
     }
+
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'master',
                     url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
-            }
-        }
-
-        stage('Debug Structure') {
-            steps {
-                sh 'ls -la'
-                sh 'find . -name package.json'
             }
         }
 
@@ -31,22 +27,40 @@ pipeline {
                 }
             }
         }
-stage('SonarQube Analysis') {
+
+        stage('Run Tests & Coverage') {
             steps {
-        SONAR_HOSTURL = 'http://192.168.8.17:9000/'
-        SONAR_AUTH_TOKEN= credentials('SonarQube_jenkins')
+                dir('ebanking-frontend') {
+                    sh 'npm run test -- --watch=false --code-coverage'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('ebanking-frontend') {
+                    withSonarQubeEnv("${SONARQUBE_SERVER}") {
+                        withCredentials([string(credentialsId: 'SonarQube_jenkins', variable: 'SONAR_AUTH_TOKEN')]) {
+                            sh """
+                                sonar-scanner \
+                                -Dsonar.projectKey=digital-banking-frontend \
+                                -Dsonar.projectName="Digital Banking Frontend" \
+                                -Dsonar.sources=src \
+                                -Dsonar.exclusions=**/*.spec.ts \
+                                -Dsonar.javascript.lcov.reportPaths=coverage/ebanking-frontend/lcov.info \
+                                -Dsonar.host.url=$SONAR_HOSTURL \
+                                -Dsonar.login=$SONAR_AUTH_TOKEN
+                            """
+                        }
+                    }
+                }
+            }
+        }
     }
+
     post {
-        always {
-            sh 'docker system prune -f'
-        }
-        success {
-            echo '✅ Frontend build et Docker déployé'
-        }
-        failure {
-            echo '❌ Erreur lors du build frontend'
-        }
-    }
-}
+        always { sh 'docker system prune -f' }
+        success { echo '✅ Frontend build et SonarQube scan OK' }
+        failure { echo '❌ Erreur lors du build frontend ou SonarQube scan' }
     }
 }
