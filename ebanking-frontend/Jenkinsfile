@@ -3,8 +3,11 @@ pipeline {
 
     tools {
         nodejs 'NodeJS22'
+      sonarScanner 'sonar-scaner'
     }
-
+    environment {
+        SONARQUBE_SERVER = 'SonarQubeServer'
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -28,7 +31,10 @@ pipeline {
                 }
             }
         }
-
+stage('SonarQube Analysis') {
+            steps {
+        SONAR_HOSTURL = 'http://192.168.8.17:9000/'
+        SONAR_AUTH_TOKEN= credentials('SonarQube_jenkins')
 
     }
 
