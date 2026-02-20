@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube-token')
+        SONAR_TOKEN = credentials('Digital Banking Frontend-token')
     }
 
     stages {
@@ -38,11 +38,10 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('ebanking-backend') {
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('SonarQubeServer') {
                         sh """
                         mvn sonar:sonar \
-                          -Dsonar.projectKey=DigitalBanking \
-                          -Dsonar.login=${SONAR_TOKEN}
+                          -Dsonar.projectKey=Digital Banking Frontend \
                         """
                     }
                 }
