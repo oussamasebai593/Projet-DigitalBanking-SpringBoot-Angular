@@ -6,6 +6,10 @@ pipeline {
         maven 'Maven'
     }
 
+    environment {
+        SONAR_TOKEN = credentials('sonarqube-token')
+    }
+
     stages {
 
         stage('Checkout') {
@@ -31,6 +35,20 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                dir('ebanking-backend') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=DigitalBanking \
+                          -Dsonar.login=${SONAR_TOKEN}
+                        """
+                    }
+                }
+            }
+        }
+
         stage('Package') {
             steps {
                 dir('ebanking-backend') {
@@ -38,12 +56,11 @@ pipeline {
                 }
             }
         }
-
     }
 
     post {
         success {
-            echo '✅ Backend build avec succès'
+            echo '✅ Backend build + SonarQube OK'
         }
         failure {
             echo '❌ Erreur dans le backend'
