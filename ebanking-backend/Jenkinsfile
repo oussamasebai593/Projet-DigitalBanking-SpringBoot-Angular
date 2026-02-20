@@ -40,7 +40,11 @@ pipeline {
                 dir('ebanking-backend') {
                     withSonarQubeEnv('SonarQubeServer') {
                         sh """
-                mvn sonar:sonar -Dsonar.projectKey=DigitalBankingFrontend
+                          -Dsonar.projectKey=DigitalBankingFrontend \
+                          -Dsonar.projectName='Digital Banking Frontend' \
+                          -Dsonar.projectVersion=1.0 \
+                          -Dsonar.sources=src/main/java \
+                          -Dsonar.tests=src/test/java \
                         """
                     }
                 }
