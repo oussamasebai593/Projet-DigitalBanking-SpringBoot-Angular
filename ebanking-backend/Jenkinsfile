@@ -35,24 +35,23 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                dir('ebanking-backend') {
-                    // ربط Jenkins مع SonarQubeServer مع استخدام الـ token
-                    withSonarQubeEnv(credentialsId: 'Digital Banking Frontend', installationName: 'SonarQubeServer') {
-                        sh """
-                        mvn sonar:sonar \
-                          -Dsonar.projectKey=DigitalBankingFrontend \
-                          -Dsonar.projectName='Digital Banking Frontend' \
-                          -Dsonar.projectVersion=1.0 \
-                          -Dsonar.sources=src/main/java \
-                          -Dsonar.tests=src/test/java \
-                          -Dsonar.login=${SONAR_TOKEN}
-                        """
-                    }
-                }
+stage('SonarQube Analysis') {
+    steps {
+        dir('ebanking-backend') {
+            withSonarQubeEnv(credentialsId: 'Digital Banking Frontend', installationName: 'SonarQubeServer') {
+                sh """
+                mvn sonar:sonar \
+                  -Dsonar.projectKey=DigitalBankingFrontend \
+                  -Dsonar.projectName='Digital Banking Frontend' \
+                  -Dsonar.projectVersion=1.0 \
+                  -Dsonar.sources=src/main/java \
+                  -Dsonar.tests=src/test/java \
+                  -Dsonar.login=${SONAR_TOKEN}
+                """
             }
         }
+    }
+}
 
         stage('Package') {
             steps {
