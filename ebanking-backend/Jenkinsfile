@@ -41,7 +41,7 @@ pipeline {
                     withSonarQubeEnv('SonarQubeServer') {
                         sh """
                         mvn sonar-scaner \
-                          -Dsonar.projectKey=Digital Banking Frontend\
+                          -Dsonar.projectKey=DigitalBankingFrontend\
                         """
                     }
                 }
