@@ -32,9 +32,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo "🔹 Stage: Run Tests"
-                dir('ebanking-backend') {
+
                     sh 'mvn test'
-                }
             }
         }
 
