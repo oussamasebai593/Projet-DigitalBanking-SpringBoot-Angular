@@ -40,6 +40,9 @@ pipeline {
                             echo "⚠️ Some tests failed. Check target/surefire-reports for details."
             }
         }
+                            }
+            }
+        }
 
         stage('SonarQube Analysis') {
             steps {
