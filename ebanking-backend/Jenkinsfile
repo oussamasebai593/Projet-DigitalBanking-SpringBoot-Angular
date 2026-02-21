@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN = credentials('Digital Banking backend-token')
+        SONAR_TOKEN = credentials('Digital Banking backend-token') // token sécurisé pour SonarQube
     }
 
     stages {
@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Tests') {
+        stage('Run Tests') {
             steps {
                 dir('ebanking-backend') {
                     sh 'mvn test'
@@ -37,8 +37,10 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQubeServer') {
-                    sh 'mvn sonar:sonar'
+                dir('ebanking-backend') {
+                    withSonarQubeEnv('SonarQubeServer') {
+                        sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
+                    }
                 }
             }
         }
@@ -46,11 +48,10 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                    waitForQualityGate abortPipeline: true // pipeline s'arrête si Quality Gate fail
                 }
             }
         }
-    
 
         stage('Package') {
             steps {
@@ -62,6 +63,9 @@ pipeline {
     }
 
     post {
+        always {
+            echo '🔹 Backend pipeline terminé'
+        }
         success {
             echo '✅ Backend build + SonarQube OK'
         }
