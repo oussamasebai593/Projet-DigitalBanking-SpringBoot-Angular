@@ -14,6 +14,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                echo "🔹 Stage: Checkout"
                 git branch: 'main',
                     url: 'https://github.com/oussamasebai593/Projet-DigitalBanking-SpringBoot-Angular.git'
             }
@@ -21,6 +22,7 @@ pipeline {
 
         stage('Build Backend') {
             steps {
+                echo "🔹 Stage: Build Backend"
                 dir('ebanking-backend') {
                     sh 'mvn clean compile'
                 }
@@ -29,6 +31,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
+                echo "🔹 Stage: Run Tests"
                 dir('ebanking-backend') {
                     sh 'mvn test'
                 }
@@ -37,6 +40,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
+                echo "🔹 Stage: SonarQube Analysis"
                 dir('ebanking-backend') {
                     withSonarQubeEnv('SonarQubeServer') {
                         sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
@@ -47,14 +51,16 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
+                echo "🔹 Stage: Quality Gate"
                 timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true // pipeline s'arrête si Quality Gate fail
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
 
         stage('Package') {
             steps {
+                echo "🔹 Stage: Package"
                 dir('ebanking-backend') {
                     sh 'mvn package -DskipTests'
                 }
