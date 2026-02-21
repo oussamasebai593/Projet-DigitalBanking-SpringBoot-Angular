@@ -43,7 +43,13 @@ pipeline {
                 echo "🔹 Stage: SonarQube Analysis"
                 dir('ebanking-backend') {
                     withSonarQubeEnv('SonarQubeServer') {
-                        sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
+                        sh """
+                        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                          -Dsonar.projectKey=Digital-Banking-Backend \
+                          -Dsonar.projectName='Digital Banking Backend' \
+                          -Dsonar.host.url=http://192.168.8.17:9000 \
+                          -Dsonar.token=${SONAR_TOKEN}
+                        """
                     }
                 }
             }
