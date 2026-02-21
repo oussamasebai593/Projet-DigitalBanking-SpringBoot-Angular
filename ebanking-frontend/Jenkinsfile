@@ -33,7 +33,7 @@ pipeline {
               steps {
                   dir('ebanking-backend') {
                      withSonarQubeEnv('SonarQubeServer')  {
-                          sh 'mvn sonar:sonar'
+                sh 'mvn sonar:sonar -Dsonar.java.binaries=target/classes'
                       }
                   }
               }
