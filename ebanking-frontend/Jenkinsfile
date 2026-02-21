@@ -4,6 +4,9 @@ pipeline {
     tools {
         nodejs 'NodeJS22' // Assure-toi que NodeJS22 est configuré dans Jenkins
     }
+  environment {
+    IMAGE_NAME = "ebanking-frontend:latest" // défini l'image
+}
 
     stages {
         stage('Checkout') {
@@ -40,20 +43,21 @@ pipeline {
         }
     }
 }
-              stage('Build Docker Image') {
-            steps {
-                dir('ebanking-frontend') {
-                    sh "docker build -t ${IMAGE_NAME} ."
-                }
-            }
+stage('Build Docker Image') {
+    steps {
+        dir('ebanking-frontend') {
+            sh "docker build -t ${IMAGE_NAME} ."
         }
+    }
+}
 
-        stage('Trivy Image Scan') {
-            steps {
-                echo "🔹 Scan de l'image Docker frontend avec Trivy"
-                sh "trivy image --exit-code 1 --severity CRITICAL,HIGH ${IMAGE_NAME}"
-            }
-        }
+stage('Trivy Image Scan') {
+    steps {
+        echo "🔹 Scan de l'image Docker frontend avec Trivy"
+        sh "trivy image --exit-code 1 --severity CRITICAL,HIGH ${IMAGE_NAME}"
+    }
+}
+    
 
         stage('SonarQube Analysis') {
             steps {
