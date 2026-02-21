@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS22'
+        nodejs 'NodeJS22' // Assure-toi que NodeJS22 est configuré dans Jenkins
     }
 
     stages {
@@ -15,14 +15,16 @@ pipeline {
 
         stage('Debug Structure') {
             steps {
+                sh 'echo "Contenu du workspace:"'
                 sh 'ls -la'
+                sh 'echo "Chercher package.json:"'
                 sh 'find . -name package.json'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                dir('ebanking-frontend') {
+                dir('ebanking-frontend') { // Mets exactement le nom du dossier frontend
                     sh 'rm -rf node_modules package-lock.json'
                     sh 'npm install'
                 }
@@ -33,19 +35,24 @@ pipeline {
             steps {
                 dir('ebanking-frontend') {
                     withSonarQubeEnv('SonarQubeServer') {
-                    mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                      -Dsonar.projectKey=ebanking-frontend \
-                      -Dsonar.projectName='ebanking-frontend' \
-                      -Dsonar.host.url=http://192.168.8.17:9000 \
-                      -Dsonar.token=sqp_d9a4a796b35ed19ac7d00191b0697eb6e06b8fe1
+                        // Utilisation de SonarScanner CLI pour projet Angular
+                        sh """
+                        sonar-scanner \
+                          -Dsonar.projectKey=ebanking-frontend \
+                          -Dsonar.projectName=ebanking-frontend \
+                          -Dsonar.sources=. \
+                          -Dsonar.host.url=http://192.168.8.17:9000 \
+                          -Dsonar.login=sqp_d9a4a796b35ed19ac7d00191b0697eb6e06b8fe1
+                        """
                     }
                 }
             }
         }
-              stage('Quality Gate') {
+
+        stage('Quality Gate') {
             steps {
                 timeout(time: 3, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: false
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -53,13 +60,14 @@ pipeline {
 
     post {
         always {
-            sh 'docker system prune -f'
+            echo '🔹 Nettoyage Docker…'
+            sh 'docker system prune -f || true'
         }
         success {
-            echo '✅ Frontend build et Docker déployé'
+            echo '✅ Frontend build et analyse SonarQube réussis !'
         }
         failure {
-            echo '❌ Erreur lors du build frontend'
+            echo '❌ Erreur lors du build frontend ou analyse SonarQube'
         }
     }
 }
