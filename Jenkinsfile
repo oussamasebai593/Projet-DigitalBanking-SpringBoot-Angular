@@ -1,41 +1,70 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'NodeJS22'
+    }
+
     environment {
-        DOCKERHUB_REPO_BACK = "oussama0079/ebanking-backend"
         DOCKERHUB_REPO_FRONT = "oussama0079/ebanking-frontend"
         TAG = "v${BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Build Backend') {
+        // ================= INSTALL =================
+
+        stage('Install Dependencies') {
             steps {
-                dir('ebanking-backend') {
-                    // Build Maven
-                    sh 'mvn clean package -DskipTests'
+                sh 'npm install'
+            }
+        }
 
-                    // Renommer le JAR pour correspondre au Dockerfile
-                    sh 'mv target/*.jar target/ebanking-back.jar'
+        // ================= TEST + COVERAGE =================
 
-                    // Vérifier que le JAR existe
-                    sh 'ls -l target/'
+        stage('Run Tests') {
+            steps {
+                sh 'npm run test -- --code-coverage --watch=false'
+            }
+        }
 
-                    // Build Docker
-                    sh "docker build -t $DOCKERHUB_REPO_BACK:$TAG ."
+        // ================= SONARQUBE =================
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQubeServer') {
+                    // some block
                 }
             }
         }
 
-        stage('Build Frontend') {
+        // ================= QUALITY GATE =================
+
+        stage('Quality Gate') {
             steps {
-                dir('ebanking-frontend') {
-                    sh 'npm install'
-                    sh 'npm run build'
-                    sh "docker build -t $DOCKERHUB_REPO_FRONT:$TAG ."
+                timeout(time: 3, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false'
                 }
             }
         }
+
+        // ================= BUILD ANGULAR =================
+
+        stage('Build Angular') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+
+        // ================= DOCKER BUILD =================
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t $DOCKERHUB_REPO_FRONT:$TAG ."
+            }
+        }
+
+        // ================= PUSH =================
 
         stage('Push to Docker Hub') {
             steps {
@@ -45,22 +74,19 @@ pipeline {
                     passwordVariable: 'PASSWORD'
                 )]) {
                     sh 'echo $PASSWORD | docker login -u $USERNAME --password-stdin'
-                    sh "docker push $DOCKERHUB_REPO_BACK:$TAG"
                     sh "docker push $DOCKERHUB_REPO_FRONT:$TAG"
                 }
             }
         }
 
+        // ================= DEPLOY =================
+
         stage('Deploy') {
             steps {
-                // Déploiement Docker Compose avec TAG dynamique
-        sh """
-            docker rm -f ebanking-db || true
-
-            TAG=${TAG} docker compose pull
-
-            TAG=${TAG} docker compose up -d --force-recreate --remove-orphans
-        """   
+                sh """
+                    TAG=${TAG} docker compose pull
+                    TAG=${TAG} docker compose up -d --force-recreate --remove-orphans
+                """
             }
         }
     }
