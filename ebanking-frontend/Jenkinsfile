@@ -30,22 +30,20 @@ pipeline {
                 }
             }
         }
-      stage('Trivy Scan') {
-    steps {
-        dir('ebanking-frontend') {
-            echo "🔹 Stage: Trivy Scan des dépendances npm"
-            // Scan de toutes les dépendances NodeJS
-            sh '''
-            # Installer trivy si pas déjà installé
-            if ! command -v trivy &> /dev/null; then
-                curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-            fi
-            # Scan npm
-            trivy fs --security-checks vuln,node --exit-code 1 --ignore-unfixed .
-            '''
+        stage('Trivy FS Scan') {
+            steps {
+                dir('ebanking-frontend') {
+                    echo "🔹 Scan des fichiers frontend avec Trivy"
+                    sh '''
+                    # Installer Trivy si nécessaire
+                    if ! command -v trivy &> /dev/null; then
+                        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+                    fi
+                    trivy fs --exit-code 1 --severity CRITICAL,HIGH .
+                    '''
+                }
+            }
         }
-    }
-}
 
         stage('SonarQube Analysis') {
             steps {
