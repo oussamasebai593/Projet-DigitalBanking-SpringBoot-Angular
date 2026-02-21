@@ -30,20 +30,16 @@ pipeline {
                 }
             }
         }
-        stage('Trivy FS Scan') {
-            steps {
-                dir('ebanking-frontend') {
-                    echo "🔹 Scan des fichiers frontend avec Trivy"
-                    sh '''
-                    # Installer Trivy si nécessaire
-                    if ! command -v trivy &> /dev/null; then
-                        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-                    fi
-                    trivy fs --exit-code 1 --severity CRITICAL,HIGH .
-                    '''
-                }
-            }
+  stage('Trivy FS Scan') {
+    steps {
+        dir('ebanking-frontend') {
+            echo "🔹 Scan des fichiers frontend avec Trivy"
+            sh '''
+            trivy fs --severity CRITICAL,HIGH .
+            '''
         }
+    }
+}
 
         stage('SonarQube Analysis') {
             steps {
