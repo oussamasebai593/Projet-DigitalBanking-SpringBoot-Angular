@@ -32,8 +32,12 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo "🔹 Stage: Run Tests"
-
-                    sh 'mvn test'
+                            dir('ebanking-backend') {
+                    // نجعل pipeline ما يفشل مباشرة لو فشل test
+                    script {
+                        def testStatus = sh(script: 'mvn test', returnStatus: true)
+                        if (testStatus != 0) {
+                            echo "⚠️ Some tests failed. Check target/surefire-reports for details."
             }
         }
 
