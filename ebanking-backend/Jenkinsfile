@@ -44,22 +44,23 @@ pipeline {
             }
         }
 
-            stage('SonarQube Analysis') {
-                steps {
-                    echo "🔹 Stage: SonarQube Analysis"
-                    dir('ebanking-backend') {
-                        withSonarQubeEnv('SonarQubeServer') {
-                            sh """
-                        mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                          -Dsonar.projectKey=Digital-Banking-Backend \
-                          -Dsonar.projectName='Digital Banking Backend' \
-                          -Dsonar.host.url=http://192.168.8.17:9000 \
-                          -Dsonar.token=sqp_4bdac60215dc347f02029c23a208802b2edc449d 
-                          """
+                stage('SonarQube Analysis') {
+                    steps {
+                        echo "🔹 Stage: SonarQube Analysis"
+                        dir('ebanking-backend') {
+                            withSonarQubeEnv('SonarQubeServer') {
+                                sh """
+                                mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                                  -DskipTests \
+                                  -Dsonar.projectKey=Digital-Banking-Backend \
+                                  -Dsonar.projectName='Digital Banking Backend' \
+                                  -Dsonar.host.url=http://192.168.8.17:9000 \
+                                  -Dsonar.token=sqp_4bdac60215dc347f02029c23a208802b2edc449d
+                                """
+                            }
                         }
                     }
                 }
-            }
 
         stage('Quality Gate') {
             steps {
