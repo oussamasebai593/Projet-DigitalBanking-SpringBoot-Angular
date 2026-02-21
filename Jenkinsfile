@@ -33,7 +33,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    // some block
+                        sh "npm run sonar"
                 }
             }
         }
@@ -43,7 +43,7 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 timeout(time: 3, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: false'
+                    waitForQualityGate abortPipeline: false
                 }
             }
         }
