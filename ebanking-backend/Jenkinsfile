@@ -43,6 +43,16 @@ pipeline {
                             }
             }
         }
+                stage('Trivy FS Scan') {
+            steps {
+                dir('ebanking-backend') {
+                    echo "🔹 Scan des fichiers backend avec Trivy"
+                    sh '''
+                    trivy fs --severity CRITICAL,HIGH .
+                    '''
+                }
+            }
+        }
 
                 stage('SonarQube Analysis') {
                     steps {
