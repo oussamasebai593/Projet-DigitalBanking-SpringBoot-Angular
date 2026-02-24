@@ -55,15 +55,15 @@ pipeline {
                 }
             }
         }
-                stage('Build Docker Image') {
-            steps {
-                dir('ebanking-backend') {
+stage('Build Docker Image') {
+    steps {
+        dir('ebanking-backend') {
             script {
                 sh "docker build -t banking-pipeline-backend:latest ."
             }
-                }
-            }
         }
+    }
+}
 
         // 🔹 Nouvelle étape: Trivy Image Scan backend
         stage('Trivy Image Scan') {
