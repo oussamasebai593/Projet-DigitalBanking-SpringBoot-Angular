@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         SONAR_TOKEN = credentials('Digital Banking backend-token') // token sécurisé pour SonarQube
-            IMAGE_NAME = "banking-pipeline-backend:latest:latest"
+        IMAGE_NAME = "banking-pipeline-backend:latest"
 
     }
 
@@ -55,15 +55,15 @@ pipeline {
                 }
             }
         }
-stage('Build Docker Image') {
-    steps {
-        dir('ebanking-backend') {
-            script {
-                sh "docker build -t banking-pipeline-backend:latest ."
+            stage('Build Docker Image') {
+                steps {
+                    dir('ebanking-backend') {
+                        echo "🔹 Build Docker Image backend"
+                        sh 'ls -la target'  // Vérifie que le JAR existe
+                        sh "docker build -t ${IMAGE_NAME} ."
+                    }
+                }
             }
-        }
-    }
-}
 
         // 🔹 Nouvelle étape: Trivy Image Scan backend
         stage('Trivy Image Scan') {
