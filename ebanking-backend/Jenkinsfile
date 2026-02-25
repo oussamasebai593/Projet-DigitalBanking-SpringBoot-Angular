@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         SONAR_TOKEN = credentials('Digital Banking backend-token') // token sécurisé pour SonarQube
-            IMAGE_NAME = "banking-pipeline-backend:latest" // défini l'image
+            IMAGE_NAME = "banking-pipeline-backend" // défini l'image
     }
 
 
