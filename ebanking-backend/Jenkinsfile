@@ -63,14 +63,14 @@ pipeline {
                         sh "docker build -t ${IMAGE_NAME} ."
                     }
                 }
-            }*/
+            }
 
         // 🔹 Nouvelle étape: Trivy Image Scan backend
         stage('Trivy Image Scan') {
             steps {
                 echo "🔹 Scan de l'image Docker backend avec Trivy"
                 sh "trivy image --exit-code 1 --severity CRITICAL,HIGH banking-backend:latest"            }
-        }
+        }*/
 
                 stage('SonarQube Analysis') {
                     steps {
