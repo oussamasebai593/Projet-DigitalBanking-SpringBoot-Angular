@@ -12,12 +12,12 @@ pipeline {
 
     stages {
 
-                // ================= CHECKOUT =================
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
+stage('Check Files') {
+    steps {
+        sh 'pwd'
+        sh 'ls -R'
+    }
+}
         // ================= INSTALL =================
 
         stage('Install Dependencies') {
