@@ -32,10 +32,11 @@ stage('Check Files') {
 
         stage('Run Tests') {
             steps {
+                        dir('ebanking-frontend') {
                 sh 'npm run test -- --code-coverage --watch=false'
             }
         }
-
+        }
         // ================= SONARQUBE =================
 
         stage('SonarQube Analysis') {
