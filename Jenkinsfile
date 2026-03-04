@@ -22,8 +22,9 @@ stage('Check Files') {
 
         stage('Install Dependencies') {
             steps {
+                        dir('ebanking-frontend') {  // <-- dossier correct
                 sh 'npm install'
-
+                        }
             }
         }
 
