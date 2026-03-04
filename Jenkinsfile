@@ -12,11 +12,19 @@ pipeline {
 
     stages {
 
+                // ================= CHECKOUT =================
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         // ================= INSTALL =================
 
         stage('Install Dependencies') {
             steps {
+                dir('frontend') {
                 sh 'npm install'
+                }
             }
         }
 
