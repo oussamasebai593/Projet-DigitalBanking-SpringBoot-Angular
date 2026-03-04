@@ -41,12 +41,13 @@ stage('Check Files') {
 
         stage('SonarQube Analysis') {
             steps {
+                        dir('ebanking-frontend') {
                 withSonarQubeEnv('SonarQubeServer') {
                         sh "npm run sonar"
                 }
             }
         }
-
+        }
         // ================= QUALITY GATE =================
 
         stage('Quality Gate') {
