@@ -22,9 +22,8 @@ stage('Check Files') {
 
         stage('Install Dependencies') {
             steps {
-                dir('frontend') {
                 sh 'npm install'
-                }
+
             }
         }
 
